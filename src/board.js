@@ -13,11 +13,25 @@ function Board(threeHelper) {
     [-1, -1, -1]
   ];
   this.finished = false;
+
   this.initialize = function () {
-    var X = this.initX, Y = .95;
+    
+    var topLeft = this.threeHelper.getLeftTopAtZ();
+    var bottomRight = this.threeHelper.getBottomRightAtZ();
+
+    var W = bottomRight.x - topLeft.x;
+    var H = topLeft.y - bottomRight.y ;
+    var edge = W>H ? H : W;
+    edge *=.7;
+    var space = edge * .2;
+    var blockEdge = edge*.8/3;
+
+    this.initX = topLeft.x + (W - edge)/2;
+    var X = this.initX, Y = topLeft.y - (H-edge)/2;
+
     for (var i = 0; i < 3; i++) {
       for (var j = 0; j < 3; j++) {
-        var geometry = new THREE.BoxGeometry(.5, .5, -.9);
+        var geometry = new THREE.BoxGeometry(blockEdge, blockEdge, -.9);
         geometry.translate(X, Y, 0);
         geometry.position = new THREE.Vector3(X, Y, 0);
         geometry.name = i * 3 + j;
@@ -25,10 +39,10 @@ function Board(threeHelper) {
         var cube = new THREE.Mesh(geometry, material);
         threeHelper.scene.add(cube);
         this.blockArray.push(cube);
-        X += .7;
+        X += blockEdge+space;
       }
       X = this.initX;
-      Y -= .7;
+      Y -= (blockEdge+space);
     }
   }
 
