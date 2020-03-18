@@ -9,14 +9,19 @@ function ThreeHelper() {
   this.renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(this.renderer.domElement);
 
-  this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+  this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
   this.camera.position.set(0, 0, 10);
   this.camera.lookAt(0, 0, 0);
 
   this.scene = new THREE.Scene();
+  this.scene.background = new THREE.Color( 0xffffff );
   
-  this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
-  this.scene.add( this.light );
+  var ambientLight = new THREE.AmbientLight ( 0xffffff, .5);
+  this.scene.add( ambientLight );
+
+  var pointLight = new THREE.PointLight( 0xffffff, 1 );
+  pointLight.position.set( 0, 10, 5 );
+  this.scene.add( pointLight );
 
   this.loader = new THREE.FontLoader();
   this.loader.load('../fonts/helvetiker_regular.typeface.json', function (font) {

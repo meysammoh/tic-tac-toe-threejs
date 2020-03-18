@@ -31,11 +31,11 @@ function Board(threeHelper) {
 
     for (var i = 0; i < 3; i++) {
       for (var j = 0; j < 3; j++) {
-        var geometry = new THREE.BoxGeometry(blockEdge, blockEdge, -.9);
+        var geometry = new THREE.BoxGeometry(blockEdge, blockEdge, -.2);
         geometry.translate(X, Y, 0);
         geometry.position = new THREE.Vector3(X, Y, 0);
         geometry.name = i * 3 + j;
-        var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        var material = new THREE.MeshStandardMaterial({ color: 0xff0051 });
         var cube = new THREE.Mesh(geometry, material);
         threeHelper.scene.add(cube);
         this.blockArray.push(cube);
