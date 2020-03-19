@@ -29,7 +29,9 @@ function Game(threeHelper) {
         var res = self.board.addMarker(intersects[0].object.geometry, self.turn);
         if (res && !self.board.finished){
           self.changeTurn();
-          self.playAI();
+          setTimeout(function(){
+            self.playAI();
+          },1000);
 
         }
         else if(self.board.finished){

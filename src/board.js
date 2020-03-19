@@ -1,5 +1,6 @@
 var THREE = require('three');
 var Marker = require('./marker');
+var Animation = require('./animation');
 
 function Board(threeHelper) {
   
@@ -71,23 +72,37 @@ function Board(threeHelper) {
   }
 
   this.checkWinCondition = function () {
-    
+    var block1, block2, block3;
     for (var i = 0; i < 3; i++) {
 
       if (this.blocks[i][0] == this.blocks[i][1] && this.blocks[i][1] == this.blocks[i][2]) {
         this.winner = this.blocks[i][0];
+        block1 = this.blockArray[i*3];
+        block2 = this.blockArray[i*3+1];
+        block3 = this.blockArray[i*3+2];
         break;
       }
       if (this.blocks[0][i] == this.blocks[1][i] && this.blocks[1][i] == this.blocks[2][i]) {
         this.winner = this.blocks[0][i];
+        block1 = this.blockArray[i];
+        block2 = this.blockArray[3+i];
+        block3 = this.blockArray[6+i];
         break;
       }
     }
     if (this.winner < 0) {
-      if (this.blocks[0][0] == this.blocks[1][1] && this.blocks[1][1] == this.blocks[2][2])
+      if (this.blocks[0][0] == this.blocks[1][1] && this.blocks[1][1] == this.blocks[2][2]){
         this.winner = this.blocks[0][0];
-      else if (this.blocks[2][0] == this.blocks[1][1] && this.blocks[1][1] == this.blocks[0][2])
+        block1 = this.blockArray[0];
+        block2 = this.blockArray[4];
+        block3 = this.blockArray[8];
+      }
+      else if (this.blocks[2][0] == this.blocks[1][1] && this.blocks[1][1] == this.blocks[0][2]){
         this.winner = this.blocks[2][0];
+        block1 = this.blockArray[2];
+        block2 = this.blockArray[4];
+        block3 = this.blockArray[6];
+      }
     }
     var text = "";
     if (this.winner < 0 && this.markersArray.length == 9) {
@@ -119,8 +134,45 @@ function Board(threeHelper) {
       var mesh = new THREE.Mesh(geometry, material);
       this.threeHelper.scene.add(mesh);
       this.threeHelper.draw();
-      document.getElementById("ui_main").style.display = "flex";
+
+      this.createWinAnimation(block1, block2, block3);
+
+      setTimeout(function(){
+        document.getElementById("ui_main").style.display = "flex";
+      },3000);
+      
     }
+  }
+
+  this.createWinAnimation = function(block1, block2, block3){
+    
+    var anim1 = new Animation(0,function(){
+        block1.rotation.z += 0.15;
+        if(block1.rotation.z > 6.28){
+          block1.rotation.z = 0;
+          return true;
+        }
+      }
+    );
+    this.threeHelper.AddAnimationToQueue(anim1);
+    var anim2 = new Animation(0.5,function(){
+      block2.rotation.z += 0.15;
+      if(block2.rotation.z > 6.28){
+        block2.rotation.z
+        return true;
+      }
+    }
+  );
+  this.threeHelper.AddAnimationToQueue(anim2);
+  var anim3 = new Animation(1,function(){
+    block3.rotation.z += 0.15;
+    if(block3.rotation.z > 6.28){
+      block3.rotation.z = 0;
+      return true;
+    }
+  }
+);
+this.threeHelper.AddAnimationToQueue(anim3);
   }
 
 }

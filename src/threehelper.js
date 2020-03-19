@@ -1,9 +1,13 @@
 var THREE = require('three');
 
 function ThreeHelper() {
-  this.self = this;
+  var self = this;
+  var clock = new THREE.Clock();
+
+  this.lastRender = 0;
   this.loader = new THREE.FontLoader();
   this.myfont = null;
+  this.animationQueue = [];
 
   this.renderer = new THREE.WebGLRenderer();
   this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -14,14 +18,14 @@ function ThreeHelper() {
   this.camera.lookAt(0, 0, 0);
 
   this.scene = new THREE.Scene();
-  this.scene.background = new THREE.Color( 0xffffff );
-  
-  this.ambientLight = new THREE.AmbientLight ( 0xffffff, .5);
-  this.scene.add( this.ambientLight );
+  this.scene.background = new THREE.Color(0xffffff);
 
-  this.pointLight = new THREE.PointLight( 0xffffff, 1 );
-  this.pointLight.position.set( 0, 10, 5 );
-  this.scene.add( this.pointLight );
+  this.ambientLight = new THREE.AmbientLight(0xffffff, .5);
+  this.scene.add(this.ambientLight);
+
+  this.pointLight = new THREE.PointLight(0xffffff, 1);
+  this.pointLight.position.set(0, 10, 5);
+  this.scene.add(this.pointLight);
 
   this.loader = new THREE.FontLoader();
   this.loader.load('../fonts/helvetiker_regular.typeface.json', function (font) {
@@ -33,19 +37,19 @@ function ThreeHelper() {
   }
 
   this.getBottomRightAtZ = function () {
-    
-    return this.map2DToWorld( window.innerWidth,window.innerHeight, 0);
+
+    return this.map2DToWorld(window.innerWidth, window.innerHeight, 0);
   }
   this.getLeftTopAtZ = function () {
-    
-    return this.map2DToWorld( 0,0, 0);
+
+    return this.map2DToWorld(0, 0, 0);
   }
-    this.map2DToWorld = function( pointX, pointY, Z){
+  this.map2DToWorld = function (pointX, pointY, Z) {
     var vec = new THREE.Vector3(); // create once and reuse
     var pos = new THREE.Vector3(); // create once and reuse
 
     vec.set(
-      (pointX/ window.innerWidth) * 2 - 1,
+      (pointX / window.innerWidth) * 2 - 1,
       - (pointY / window.innerHeight) * 2 + 1,
       Z);
 
@@ -58,15 +62,39 @@ function ThreeHelper() {
     pos.copy(this.camera.position).add(vec.multiplyScalar(distance));
     return pos;
   }
-  this.deleteEverything = function(){
+  this.deleteEverything = function () {
     let obj = null;
-    for( var i = this.scene.children.length - 1; i >= 0; i--) { 
+    for (var i = this.scene.children.length - 1; i >= 0; i--) {
       obj = this.scene.children[i];
-      if( obj !== this.ambientLight && obj != this.pointLight)
+      if (obj !== this.ambientLight && obj != this.pointLight)
         this.scene.remove(obj);
     }
+    this.animationQueue = [];
     this.draw();
   }
+  this.AddAnimationToQueue = function (animation) {
+    this.animationQueue.push(animation);
+  }
+  this.animate = function () {
+    self.lastRender += clock.getDelta();
+    if (self.lastRender > 0.060) {
+      if (self.animationQueue.length > 0) {
+
+        self.animationQueue.forEach(function (animation, index) {
+          if (!animation.isFinished)
+            animation.stepForward()
+          else {
+            self.animationQueue.splice(index, 1);
+          }
+        });
+      }
+
+      self.renderer.render(self.scene, self.camera)
+      self.lastRender = 0;
+    }
+    requestAnimationFrame(self.animate)
+  }
+
 
 }
 

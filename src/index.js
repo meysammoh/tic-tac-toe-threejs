@@ -7,7 +7,7 @@ var threeHelper = new ThreeHelper();
 window.addEventListener('resize', onWindowResize, false);
 
 startNewGame();
-
+threeHelper.animate();
 function onWindowResize() {
 
   threeHelper.camera.aspect = window.innerWidth / window.innerHeight;
