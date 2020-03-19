@@ -7,6 +7,7 @@ function Board(threeHelper) {
   this.threeHelper = threeHelper;
   this.blockArray = [];
   this.markersArray = [];
+  this.winner = -1;
   this.blocks = [
     [-1, -1, -1],
     [-1, -1, -1],
@@ -70,34 +71,34 @@ function Board(threeHelper) {
   }
 
   this.checkWinCondition = function () {
-    var winner = -1;
+    
     for (var i = 0; i < 3; i++) {
 
       if (this.blocks[i][0] == this.blocks[i][1] && this.blocks[i][1] == this.blocks[i][2]) {
-        winner = this.blocks[i][0];
+        this.winner = this.blocks[i][0];
         break;
       }
       if (this.blocks[0][i] == this.blocks[1][i] && this.blocks[1][i] == this.blocks[2][i]) {
-        winner = this.blocks[0][i];
+        this.winner = this.blocks[0][i];
         break;
       }
     }
-    if (winner < 0) {
+    if (this.winner < 0) {
       if (this.blocks[0][0] == this.blocks[1][1] && this.blocks[1][1] == this.blocks[2][2])
-        winner = this.blocks[0][0];
+        this.winner = this.blocks[0][0];
       else if (this.blocks[2][0] == this.blocks[1][1] && this.blocks[1][1] == this.blocks[0][2])
-        winner = this.blocks[2][0];
+        this.winner = this.blocks[2][0];
     }
     var text = "";
-    if (winner < 0 && this.markersArray.length == 9) {
+    if (this.winner < 0 && this.markersArray.length == 9) {
       text = "Draw!";
       this.finished = true;
     }
-    else if (winner == 0) {
+    else if (this.winner == 0) {
       text = "Player wins!";
       this.finished = true;
     }
-    else if (winner == 1) {
+    else if (this.winner == 1) {
       text = "Computer wins!";
       this.finished = true;
     }
@@ -118,6 +119,7 @@ function Board(threeHelper) {
       var mesh = new THREE.Mesh(geometry, material);
       this.threeHelper.scene.add(mesh);
       this.threeHelper.draw();
+      document.getElementById("ui_main").style.display = "flex";
     }
   }
 

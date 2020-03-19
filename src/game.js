@@ -8,7 +8,8 @@ function Game(threeHelper) {
   var self = this;
   this.turn = 0;
   this.board = new Board(this.threeHelper);
-  
+  this.playerScore = 0;
+  this.computerScore = 0;  
 
   this.onclick = function (event) {
     if (self.turn == 0 && !self.board.finished) {
@@ -30,6 +31,9 @@ function Game(threeHelper) {
           self.changeTurn();
           self.playAI();
 
+        }
+        else if(self.board.finished){
+          self.finishUp();
         }
       }
     }
@@ -61,10 +65,23 @@ function Game(threeHelper) {
     if( this.board.addMarker(this.board.blockArray[availableBlocks[selected]].geometry, this.turn)){
       this.changeTurn();
     }
+    if( this.board.finished){
+      this.finishUp();
+    }
   }
 
   this.changeTurn = function(){
     this.turn = (this.turn + 1) % 2;
+  }
+
+  this.finishUp = function(){
+    if( this.board.winner == 0 ){
+      this.playerScore++;
+    }
+    else if( this.board.winner == 1 ){
+      this.computerScore++;
+    }
+    document.getElementById('lbl_score').innerHTML = 'Total wins: Computer: '+this.computerScore+" | Player: "+this.playerScore;
   }
 }
 

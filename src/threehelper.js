@@ -16,12 +16,12 @@ function ThreeHelper() {
   this.scene = new THREE.Scene();
   this.scene.background = new THREE.Color( 0xffffff );
   
-  var ambientLight = new THREE.AmbientLight ( 0xffffff, .5);
-  this.scene.add( ambientLight );
+  this.ambientLight = new THREE.AmbientLight ( 0xffffff, .5);
+  this.scene.add( this.ambientLight );
 
-  var pointLight = new THREE.PointLight( 0xffffff, 1 );
-  pointLight.position.set( 0, 10, 5 );
-  this.scene.add( pointLight );
+  this.pointLight = new THREE.PointLight( 0xffffff, 1 );
+  this.pointLight.position.set( 0, 10, 5 );
+  this.scene.add( this.pointLight );
 
   this.loader = new THREE.FontLoader();
   this.loader.load('../fonts/helvetiker_regular.typeface.json', function (font) {
@@ -58,7 +58,15 @@ function ThreeHelper() {
     pos.copy(this.camera.position).add(vec.multiplyScalar(distance));
     return pos;
   }
-
+  this.deleteEverything = function(){
+    let obj = null;
+    for( var i = this.scene.children.length - 1; i >= 0; i--) { 
+      obj = this.scene.children[i];
+      if( obj !== this.ambientLight && obj != this.pointLight)
+        this.scene.remove(obj);
+    }
+    this.draw();
+  }
 
 }
 
